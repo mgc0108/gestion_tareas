@@ -1,0 +1,7 @@
+# Ignorar configuración de base de datos personal
+config/database.php
+
+# Ignorar archivos temporales de Windows o editores
+.DS_Store
+Thumbs.db
+.vscode/
