@@ -1,20 +1,27 @@
 <?php
-// config/database.php
-function conectarDB() {
-    $host = 'localhost';
-    $db   = 'planificador_tareas';
-    $user = 'root';
-    $pass = '';
-    $charset = 'utf8mb4'; // IMPORTANTE
+class Database {
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    public $conn;
 
-    try {
-        $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-        $options = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ];
-        return new PDO($dsn, $user, $pass, $options);
-    } catch (\PDOException $e) {
-        throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    public function __construct() {
+        // Estas variables las rellena Clever Cloud automáticamente al estar vinculados
+        $this->host = getenv("MYSQL_ADDON_HOST") ?: "localhost";
+        $this->db_name = getenv("MYSQL_ADDON_DB") ?: "gestion_tareas";
+        $this->username = getenv("MYSQL_ADDON_USER") ?: "root";
+        $this->password = getenv("MYSQL_ADDON_PASSWORD") ?: "";
+    }
+
+    public function getConnection() {
+        $this->conn = null;
+        try {
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            $this->conn->exec("set names utf8mb4");
+        } catch(PDOException $exception) {
+            echo "Error de conexión: " . $exception->getMessage();
+        }
+        return $this->conn;
     }
 }
